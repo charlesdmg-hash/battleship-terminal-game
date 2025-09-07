@@ -14,11 +14,6 @@ board = [
     ['～' for i in range(10)],
  ]
 
-def default_board():
-    print("   " + "  ".join(chr(65+i) for i in range(len(board[0]))))
-    for i , row in enumerate(board):
-        print(f"{i+1:2} " + " ".join(row))
-    
 
 class Player:
     count = 1
@@ -29,7 +24,19 @@ class Player:
         else:
             self.name = name
 
-        self.board = default_board()
         
-default_board()
+    def __repr__(self):
+        return f"{self.name}'s board:\n" + f"{self.default_board()}"
+    
+
+    def default_board(self):
+        strboard = ("   " + "  ".join(chr(65+i) for i in range(len(board[0]))) + "\n")
+        for i , row in enumerate(board):
+            strboard += (f"{i+1:2} " + " ".join(row) + "\n")
+        
+        return strboard
+
+    
+player_1 = Player("Charles")
+print(player_1)
         
