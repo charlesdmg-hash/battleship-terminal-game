@@ -1,16 +1,16 @@
+from itertools import count
 import os
 
 def clear_console():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 class Player:
-    count = 1
 
-    def __init__(self, name):
+    def __init__(self, name, count = 1):
 
+        self.count = count
         if name == "":
-            self.name = f"Player {Player.count}"
-            Player.count += 1
+            self.name = f"Player {self.count}"
         else:
             self.name = name
 
@@ -119,12 +119,17 @@ class Player:
 
 print("Welcome to Battleship!\n")
 name_1 = input("Enter the name of player 1: ").strip()
-player_1 = Player(name_1)
-name_2 = input("Enter the name of player 2: ").strip()
-player_2 = Player(name_2)
-print("\n")
+if name_1 == "":    
+    player_1 = Player(name_1)
+else:
+    player_1 = Player(name_1)
 
-    
+name_2 = input("Enter the name of player 2: ").strip()
+if name_2 == "":
+    player_2 = Player(name_2, count = 2)
+else:
+    player_2 = Player(name_2)
+
 turn = 0
 while turn == 0:
 
