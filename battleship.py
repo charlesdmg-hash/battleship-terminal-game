@@ -1,12 +1,15 @@
 import os
 
+def clear_console():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 class Player:
     count = 1
 
-    def __init__(self, name = "Player"):
+    def __init__(self, name):
 
-        if name == "Player":
-            self.name = f"{name} {Player.count}"
+        if name == "":
+            self.name = f"Player {Player.count}"
             Player.count += 1
         else:
             self.name = name
@@ -62,73 +65,146 @@ class Player:
                 for i in range(length):
                     if (abs(y1 - y2)) == length -1:
                         if self.board[min(y1, y2) + i][x1] == "^":
+                            clear_console()
                             print("Invalid placement. Ships cannot overlap.")  
                             return
                         self.board[min(y1, y2) + i][x1] = "^"
-                        self.ships[self.ship] -= 1
+
+                    else:
+                        clear_console()
+                        print("\nInvalid placement. The length of the ship does not match the coordinates provided.")
+                        return
+                self.ships[self.ship] -= 1
+
             elif y1 == y2:
                 for i in range(length):
                     if (abs(x1 - x2)) == length -1:
                         if self.board[y1][min(x1, x2) + i] == "^":
+                            clear_console() 
                             print("Invalid placement. Ships cannot overlap.")
                             return
                         self.board[y1][min(x1, x2) + i] = "^"
-                        self.ships[self.ship] -= 1
+                        
+                    else:
+                        clear_console()
+                        print("\nInvalid placement. The length of the ship does not match the coordinates provided.")
+                        return
+                self.ships[self.ship] -= 1
 
             else:
+                clear_console()
                 print("\nInvalid placement. Ships must be placed either horizontally or vertically.")
 
         if self.ship in self.ships:
             if self.ship == "Carrier" and self.ships[self.ship] > 0:
                 length = 5
                 coordinates(self.start, self.end, length)
+                clear_console()
             elif self.ship == "Battleship" and self.ships[self.ship] > 0:
                 length = 4
                 coordinates(self.start, self.end, length)
+                clear_console()
             elif self.ship == "Cruiser" and self.ships[self.ship] > 0:
                 length = 3
                 coordinates(self.start, self.end, length)
+                clear_console() 
             elif self.ship == "Submarine" and self.ships[self.ship] > 0:
                 length = 3
                 coordinates(self.start, self.end, length)
+                clear_console()
             elif self.ship == "Destroyer" and self.ships[self.ship] > 0:
                 length = 2
                 coordinates(self.start, self.end, length)
-            else:
-                print("You have already placed this ship or the ship name is invalid.")
-        else:
-            print("Invalid ship name. Please choose from Carrier, Battleship, Cruiser, Submarine, or Destroyer.")
+                clear_console()
 
-#Example usage
-player_1 = Player()
-#print(player_1)
-player_2 = Player()
-#print(player_2)
+print("Welcome to Battleship!\n")
+name_1 = input("Enter the name of player 1: ").strip()
+player_1 = Player(name_1)
+name_2 = input("Enter the name of player 2: ").strip()
+player_2 = Player(name_2)
+print("\n")
 
-def clear_console():
-    os.system('cls' if os.name == 'nt' else 'clear')
     
+turn = 0
+while turn == 0:
 
-while player_1.ships["Carrier"] > 0 or player_1.ships["Battleship"] > 0 or player_1.ships["Cruiser"] > 0 or player_1.ships["Submarine"] > 0 or player_1.ships["Destroyer"] > 0:
-    print("\nPlacing ships... " + "You have five ships to place. " + "The ships are: Carrier (5), Battleship (4), Cruiser (3), Submarine (3), and Destroyer (2).")
-    print("Numbers measure the length of the ship.\n")
-
-    ship = input("Enter the name of the ship you want to place (Carrier, Battleship, Cruiser, Submarine, Destroyer): ").title()
-
-    if ship not in player_1.ships:
+    if all(value == 0 for value in player_1.ships.values()):
+        turn += 1
         clear_console()
-        print("\nInvalid ship name. Please choose from Carrier, Battleship, Cruiser, Submarine, or Destroyer.")
-        continue
-    if player_1.ships[ship] == 0:
-        clear_console() 
-        print("You have already placed this ship. Please choose a different ship.")
-        continue
-    start = input(f"Enter the starting coordinate of your {ship} (e.g., A1): ").upper()
-    end = input(f"Enter the ending coordinate of your {ship} (e.g., A5): " ).upper() 
-    start = [start[0], start[1:]]
-    end = [end[0], end[1:]]
-    player_1.place_ships(ship, start, end)
-    print("\n", player_1)
-
+        print(f"{player_1.name}, you have placed all your ships!\n")
+        input("Press Enter to continue...")
+        clear_console()
+        break
     
+    else:
+
+        print(player_1)
+        print("\nPlacing ships... " + "You have five ships to place. " + "The ships are: Carrier (5), Battleship (4), Cruiser (3), Submarine (3), and Destroyer (2).")
+        print("Numbers measure the length of the ship.\n")
+
+        ship = input("Enter the name of the ship you want to place (Carrier, Battleship, Cruiser, Submarine, Destroyer): ").title()
+
+        if ship not in player_1.ships:
+
+            clear_console()
+            print("Invalid ship name. Please choose from Carrier, Battleship, Cruiser, Submarine, or Destroyer.\n")
+            continue
+
+        elif ship in player_1.ships and player_1.ships[ship] == 1:
+        
+            start = input(f"Enter the starting coordinate of your {ship} (e.g., A1): ").upper()
+            end = input(f"Enter the ending coordinate of your {ship} (e.g., A5): " ).upper() 
+            start = [start[0], start[1:]]
+            end = [end[0], end[1:]]
+        
+            clear_console()
+            player_1.place_ships(ship, start, end)
+        
+        else:
+
+            clear_console()
+            print("You have already placed this ship. Please choose a different ship.\n")
+
+
+while turn == 1:
+
+    if all(value == 0 for value in player_2.ships.values()):
+        turn -= 1
+        clear_console()
+        print(f"{player_2.name}, you have placed all your ships!\n")
+        input("Press Enter to continue...")
+        clear_console()
+        break
+        
+    else:
+
+        print(player_2)
+        print("\nPlacing ships... " + "You have five ships to place. " + "The ships are: Carrier (5), Battleship (4), Cruiser (3), Submarine (3), and Destroyer (2).")
+        print("Numbers measure the length of the ship.\n")
+
+        ship = input("Enter the name of the ship you want to place (Carrier, Battleship, Cruiser, Submarine, Destroyer): ").title()
+
+        if ship not in player_2.ships:
+
+            clear_console()
+            print("Invalid ship name. Please choose from Carrier, Battleship, Cruiser, Submarine, or Destroyer.\n")
+            continue
+
+        elif ship in player_2.ships and player_2.ships[ship] == 1:
+
+            start = input(f"Enter the starting coordinate of your {ship} (e.g., A1): ").upper()
+            end = input(f"Enter the ending coordinate of your {ship} (e.g., A5): " ).upper() 
+            start = [start[0], start[1:]]
+            end = [end[0], end[1:]]
+        
+            clear_console()
+            player_2.place_ships(ship, start, end)
+        
+        else:
+
+            clear_console()
+            print("You have already placed this ship. Please choose a different ship.\n")
+        
+
+print("\n", player_1)      
 print("\n", player_2)
