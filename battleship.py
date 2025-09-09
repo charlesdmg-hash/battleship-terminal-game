@@ -106,12 +106,15 @@ class Player:
                             clear_console()
                             print("Invalid placement. Ships cannot overlap.")  
                             return
+                        
                         self.board[min(y1, y2) + i][x1] = "^"
+                        self.ships_pos[chr(x1 + 65) + str(min(y1, y2) + i + 1)] = (ship, str(min(y1, y2) + i + 1)) 
 
                     else:
                         clear_console()
                         print("\nInvalid placement. The length of the ship does not match the coordinates provided.")
                         return
+                    
                 self.ships[self.ship] -= 1
                 self.ships_menu[self.ship]["placed"] = True
                 print(self.ship + " placed successfully!\n")
@@ -124,11 +127,13 @@ class Player:
                             print("Invalid placement. Ships cannot overlap.")
                             return
                         self.board[y1][min(x1, x2) + i] = "^"
-                        
+                        self.ships_pos[((chr(min(x1, x2) + i + 65)) + str(y1 + 1))] = (ship, str(min(x1, x2) + i + 1))
+
                     else:
                         clear_console()
                         print("\nInvalid placement. The length of the ship does not match the coordinates provided.")
                         return
+                    
                 self.ships[self.ship] -= 1
                 self.ships_menu[self.ship]["placed"] = True
                 print(self.ship + " placed successfully!\n")
@@ -316,7 +321,14 @@ while turn == 1:
         
             clear_console()
             player_2.place_ships(ship, start, end)
+
+
+print("All ships placed successfully! Let the game begin!\n")
         
 
 print("\n", player_1)      
 print("\n", player_2)
+print("\n")
+print(player_1.ships_pos)
+print("\n")
+print(player_2.ships_pos)
