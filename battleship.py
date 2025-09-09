@@ -68,7 +68,7 @@ class Player:
         
     def __repr__(self):
 
-        return f"{self.name}'s board:\n\n" + f"{self.default_board()} \nAttack board:\n\n" + f"{self.playing_board()}"
+        return f"{self.name}'s board:\n\n" + f"{self.default_board()}"
 
 
     def default_board(self):
@@ -114,6 +114,7 @@ class Player:
                         return
                 self.ships[self.ship] -= 1
                 self.ships_menu[self.ship]["placed"] = True
+                print(self.ship + " placed successfully!\n")
 
             elif y1 == y2:
                 for i in range(length):
@@ -130,6 +131,7 @@ class Player:
                         return
                 self.ships[self.ship] -= 1
                 self.ships_menu[self.ship]["placed"] = True
+                print(self.ship + " placed successfully!\n")
 
             else:
                 clear_console()
@@ -138,24 +140,28 @@ class Player:
         if self.ship in self.ships:
             if self.ship == "Carrier" and self.ships[self.ship] > 0:
                 length = 5
-                coordinates(self.start, self.end, length)
                 clear_console()
+                coordinates(self.start, self.end, length)
+                
             elif self.ship == "Battleship" and self.ships[self.ship] > 0:
                 length = 4
-                coordinates(self.start, self.end, length)
                 clear_console()
+                coordinates(self.start, self.end, length)
+
             elif self.ship == "Cruiser" and self.ships[self.ship] > 0:
                 length = 3
-                coordinates(self.start, self.end, length)
                 clear_console()
+                coordinates(self.start, self.end, length)
+
             elif self.ship == "Submarine" and self.ships[self.ship] > 0:
                 length = 3
-                coordinates(self.start, self.end, length)
                 clear_console()
+                coordinates(self.start, self.end, length)
+
             elif self.ship == "Destroyer" and self.ships[self.ship] > 0:
                 length = 2
-                coordinates(self.start, self.end, length)
                 clear_console()
+                coordinates(self.start, self.end, length)
 
 #Start of the game
 
@@ -163,6 +169,7 @@ print("Welcome to Battleship!\n")
 name_1 = input("Enter the name of player 1: ").strip()
 if name_1 == "":    
     player_1 = Player(name_1)
+    print("\nInvalid name. Player 1 will be named 'Player 1'. \n")
 else:
     player_1 = Player(name_1)
 
