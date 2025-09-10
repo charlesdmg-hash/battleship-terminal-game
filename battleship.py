@@ -168,6 +168,85 @@ class Player:
                 clear_console()
                 coordinates(self.start, self.end, length)
 
+    def attack(self, target, coordinates):
+
+        x, y = ord(coordinates[0]) - 65, int(coordinates[1]) - 1
+        self.remaining_ships_to_sunk = [ship for ship in target.ships_status if any(status == "^" for status in target.ships_status[ship])]
+        target.remaining_ships_to_sunk = [ship for ship in self.ships_status if any(status == "^" for status in self.ships_status[ship])]
+
+        if target.board[y][x] == "^":
+            self.attack_board[y][x] = "O"
+            target.ships_pos[coordinates]
+            target.ships_status[target.ships_pos[coordinates][0]] = "O"
+            print(f"hit! You hit a ship at {coordinates}.\n")
+            if all(status == "O" for status in target.ships_status[target.ships_pos[coordinates][0]]):
+                
+                print(f"You sunk {target.name}'s {target.ships_pos[coordinates][0]}!\n")
+                self.remaining_ships_to_sunk = [ship for ship in target.ships_status if any(status == "^" for status in target.ships_status[ship])]
+
+            print(f"You have {len(self.remaining_ships_to_sunk)} ships remaining to be sunk: {", ".join(self.remaining_ships_to_sunk)}.\n")
+            print(f"{target.name} has {len(target.remaining_ships_to_sunk)} ships remaining to sunk: {", ".join(target.remaining_ships_to_sunk)}.\n")
+
+        else:
+            self.attack_board[y][x] = "X"
+            print(f"Miss! No ship at {coordinates}.\n")
+            print(f"You have {len(self.remaining_ships_to_sunk)} ships remaining to be sunk: {", ".join(self.remaining_ships_to_sunk)}.\n")
+            print(f"{target.name} has {len(target.remaining_ships_to_sunk)} ships remaining to sunk: {", ".join(target.remaining_ships_to_sunk)}.\n")
+
+    def reset(self):
+
+        self.board = [
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+        ]
+
+        self.attack_board = [
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+    ['~' for i in range(10)],
+        ]
+
+        self.ships = {
+            "Carrier": 1,
+            "Battleship": 1,
+            "Cruiser": 1,
+            "Submarine": 1,
+            "Destroyer": 1
+        }
+
+        self.ships_status = {
+            "Carrier": ["^","^","^","^","^"],
+            "Battleship": ["^","^","^","^"],
+            "Cruiser": ["^","^","^"],
+            "Submarine": ["^","^","^"],
+            "Destroyer": ["^","^"]
+        }
+
+        self.ships_pos = {}
+
+        self.ships_menu = {
+            "Carrier": {"length": 5, "placed": False}, 
+            "Battleship": {"length": 4, "placed": False}, 
+            "Cruiser": {"length": 3, "placed": False}, 
+            "Submarine": {"length": 3, "placed": False}, 
+            "Destroyer": {"length": 2, "placed": False}
+        }
+
 #Start of the game
 
 print("Welcome to Battleship!\n")
@@ -186,149 +265,234 @@ else:
     player_2 = Player(name_2)
     print("\n")
 
-turn = 0
-while turn == 0:
+while True:
 
-    if all(value == 0 for value in player_1.ships.values()):
-        turn += 1
-        clear_console()
-        print(f"{player_1.name}, you have placed all your ships!\n")
-        input("Press Enter to continue...")
-        clear_console()
-        break
-    
-    else:
+    turn = 0
+    while turn == 0:
 
-        while 1 in player_1.ships.values():
-
-            print(player_1)
-            remaining_ships = [ship for ship, status in player_1.ships_menu.items() if status["placed"] == False]
-            remaining_ships_length = [size['length'] for ship, size in player_1.ships_menu.items() if size["placed"] == False]
-
-            print("\nPlacing ships... " + f"You have {len(remaining_ships)} ships to place. "\
-                   + f"The ships are: {", ".join(f"{name} ({size})" for name, size in zip(remaining_ships, remaining_ships_length))}.")
-            print("Numbers measure the length of the ship.\n")
-
-            ship = input(f"Enter the name of the ship you want to place {", ".join(remaining_ships)}: ").title()
-
-            if ship not in player_1.ships:
-
-                clear_console()
-                print(f"Invalid ship name. Please choose from {", ".join(remaining_ships)}.\n")
-                continue
-
-            elif ship in player_1.ships and player_1.ships[ship] == 1:
-        
-                start = input(f"Enter the starting coordinate of your {ship} (e.g., A1): ").upper()
-
-                if start == "":
-                    clear_console()
-                    print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
-                    continue
-
-                elif len(start) < 2 or len(start) > 3 or not start[0].isalpha() or not start[1:].isdigit():
-                    clear_console()
-                    print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
-                    continue
-
-                end = input(f"Enter the ending coordinate of your {ship} (e.g., A5): " ).upper()
-
-                if end == "":
-                    clear_console()
-                    print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
-                    continue
-
-                elif len(end) < 2 or len(end) > 3 or not end[0].isalpha() or not end[1:].isdigit():
-                    clear_console()
-                    print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
-                    continue
-
-            start = [start[0], start[1:]]
-            end = [end[0], end[1:]]
-        
+        if all(value == 0 for value in player_1.ships.values()):
+            turn += 1
             clear_console()
-            player_1.place_ships(ship, start, end)
+            print(f"{player_1.name}, you have placed all your ships!\n")
+            input("Press Enter to continue...")
+            clear_console()
+            break
         
         else:
 
-            clear_console()
-            print("You have already placed this ship. Please choose a different ship.\n")
+            while 1 in player_1.ships.values():
 
+                print(player_1)
+                remaining_ships = [ship for ship, status in player_1.ships_menu.items() if status["placed"] == False]
+                remaining_ships_length = [size['length'] for ship, size in player_1.ships_menu.items() if size["placed"] == False]
 
-while turn == 1:
+                print("\nPlacing ships... " + f"You have {len(remaining_ships)} ships to place. "\
+                    + f"The ships are: {", ".join(f"{name} ({size})" for name, size in zip(remaining_ships, remaining_ships_length))}.")
+                print("Numbers measure the length of the ship.\n")
 
-    if all(value == 0 for value in player_2.ships.values()):
-        turn -= 1
-        clear_console()
-        print(f"{player_2.name}, you have placed all your ships!\n")
-        input("Press Enter to continue...")
-        clear_console()
-        break
-        
-    else:
+                ship = input(f"Enter the name of the ship you want to place {", ".join(remaining_ships)}: ").title()
 
-        while 1 in player_2.ships.values():
+                if ship not in player_1.ships:
 
-            print(player_2)
-            remaining_ships = [ship for ship, status in player_2.ships_menu.items() if status["placed"] == False]
-            remaining_ships_length = [size['length'] for ship, size in player_2.ships_menu.items() if size["placed"] == False]
+                    clear_console()
+                    print(f"Invalid ship name. Please choose from {", ".join(remaining_ships)}.\n")
+                    continue
 
-            print(f"\nPlacing ships... " + f"You have {len(remaining_ships)} ships to place. "\
-                   + f"The ships are: {", ".join(f"{name} ({size})" for name, size in zip(remaining_ships, remaining_ships_length))}.")
-            print("Numbers measure the length of the ship.\n")
+                elif ship in player_1.ships and player_1.ships[ship] == 1:
+            
+                    start = input(f"Enter the starting coordinate of your {ship} (e.g., A1): ").upper()
 
-            ship = input(f"Enter the name of the ship you want to place {", ".join(remaining_ships)}: ").title()
+                    if start == "":
+                        clear_console()
+                        print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                        continue
 
-            if ship not in player_2.ships:
+                    elif len(start) < 2 or len(start) > 3 or not start[0].isalpha() or not start[1:].isdigit():
+                        clear_console()
+                        print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                        continue
 
+                    end = input(f"Enter the ending coordinate of your {ship} (e.g., A5): " ).upper()
+
+                    if end == "":
+                        clear_console()
+                        print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                        continue
+
+                    elif len(end) < 2 or len(end) > 3 or not end[0].isalpha() or not end[1:].isdigit():
+                        clear_console()
+                        print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                        continue
+
+                start = [start[0], start[1:]]
+                end = [end[0], end[1:]]
+            
                 clear_console()
-                print(f"Invalid ship name. Please choose from {", ".join(remaining_ships)}.\n")
-                continue
- 
-            elif ship in player_2.ships and player_2.ships[ship] == 1:
-
-                start = input(f"Enter the starting coordinate of your {ship} (e.g., A1): ").upper()
-
-                if start == "":
-                    clear_console()
-                    print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
-                    continue
-
-                elif len(start) < 2 or len(start) > 3 or not start[0].isalpha() or not start[1:].isdigit():
-                    clear_console()
-                    print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
-                    continue
-
-                end = input(f"Enter the ending coordinate of your {ship} (e.g., A5): " ).upper()
-
-                if end == "":
-                    clear_console()
-                    print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
-                    continue
-
-                elif len(end) < 2 or len(end) > 3 or not end[0].isalpha() or not end[1:].isdigit():
-                    clear_console()
-                    print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
-                    continue
+                player_1.place_ships(ship, start, end)
+            
             else:
 
                 clear_console()
                 print("You have already placed this ship. Please choose a different ship.\n")
-    
 
-            start = [start[0], start[1:]]
-            end = [end[0], end[1:]]
-        
+
+    while turn == 1:
+
+        if all(value == 0 for value in player_2.ships.values()):
+            turn -= 1
             clear_console()
-            player_2.place_ships(ship, start, end)
+            print(f"{player_2.name}, you have placed all your ships!\n")
+            input("Press Enter to continue...")
+            clear_console()
+            break
+            
+        else:
 
+            while 1 in player_2.ships.values():
 
-print("All ships placed successfully! Let the game begin!\n")
+                print(player_2)
+                remaining_ships = [ship for ship, status in player_2.ships_menu.items() if status["placed"] == False]
+                remaining_ships_length = [size['length'] for ship, size in player_2.ships_menu.items() if size["placed"] == False]
+
+                print(f"\nPlacing ships... " + f"You have {len(remaining_ships)} ships to place. "\
+                    + f"The ships are: {", ".join(f"{name} ({size})" for name, size in zip(remaining_ships, remaining_ships_length))}.")
+                print("Numbers measure the length of the ship.\n")
+
+                ship = input(f"Enter the name of the ship you want to place {", ".join(remaining_ships)}: ").title()
+
+                if ship not in player_2.ships:
+
+                    clear_console()
+                    print(f"Invalid ship name. Please choose from {", ".join(remaining_ships)}.\n")
+                    continue
+    
+                elif ship in player_2.ships and player_2.ships[ship] == 1:
+
+                    start = input(f"Enter the starting coordinate of your {ship} (e.g., A1): ").upper()
+
+                    if start == "":
+                        clear_console()
+                        print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                        continue
+
+                    elif len(start) < 2 or len(start) > 3 or not start[0].isalpha() or not start[1:].isdigit():
+                        clear_console()
+                        print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                        continue
+
+                    end = input(f"Enter the ending coordinate of your {ship} (e.g., A5): " ).upper()
+
+                    if end == "":
+                        clear_console()
+                        print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                        continue
+
+                    elif len(end) < 2 or len(end) > 3 or not end[0].isalpha() or not end[1:].isdigit():
+                        clear_console()
+                        print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                        continue
+                else:
+
+                    clear_console()
+                    print("You have already placed this ship. Please choose a different ship.\n")
         
 
-print("\n", player_1)      
-print("\n", player_2)
-print("\n")
-print(player_1.ships_pos)
-print("\n")
-print(player_2.ships_pos)
+                start = [start[0], start[1:]]
+                end = [end[0], end[1:]]
+            
+                clear_console()
+                player_2.place_ships(ship, start, end)
+
+
+    print("All ships placed successfully! Let the game begin!\n")
+
+    winner = 0
+
+    while winner == 0: 
+
+        while turn == 0:
+            print(f"{player_1.name}'s turn to attack!\n")
+            print("Your attack board:\n")
+            print(player_1.playing_board())
+            coordinates = input("Enter the coordinates to attack (e.g., A1): ").upper()
+
+            if coordinates == "":
+                clear_console()
+                print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                continue
+
+            elif len(coordinates) < 2 or len(coordinates) > 3 or not coordinates[0].isalpha() or not coordinates[1:].isdigit():
+                clear_console()
+                print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                continue        
+
+            clear_console()
+            
+            if player_1.attack_board[ord(coordinates[0]) - 65][int(coordinates[1]) - 1] in ["O", "X"]:
+                print("You have already attacked this coordinate. Please choose different coordinates.\n")
+                continue
+            else:
+                player_1.attack(player_2, coordinates)
+
+
+            if all(all(status == "O" for status in statuses) for statuses in player_2.ships_status.values()):
+                winner = 1
+                clear_console()
+                print(f"Congratulations {player_1.name}! You have sunk all of {player_2.name}'s ships and won the game!\n")
+                break
+
+            input("Press Enter to end your turn...")
+            clear_console()
+            turn = 1 - turn
+
+        while turn == 1:
+            print(f"{player_2.name}'s turn to attack!\n")
+            print("Your attack board:\n")
+            print(player_2.playing_board())
+            coordinates = input("Enter the coordinates to attack (e.g., A1): ").upper()
+
+            if coordinates == "":
+                clear_console()
+                print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                continue
+
+            elif len(coordinates) < 2 or len(coordinates) > 3 or not coordinates[0].isalpha() or not coordinates[1:].isdigit():
+                clear_console()
+                print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                continue        
+
+            clear_console()
+            
+            if player_2.attack_board[ord(coordinates[0]) - 65][int(coordinates[1]) - 1] in ["O", "X"]:
+                print("You have already attacked this coordinate. Please choose different coordinates.\n")
+                continue
+            else:
+                player_2.attack(player_1, coordinates)
+
+            if all(all(status == "O" for status in statuses) for statuses in player_1.ships_status.values()):
+                winner = 2
+                clear_console()
+                print(f"Congratulations {player_2.name}! You have sunk all of {player_1.name}'s ships and won the game!\n")
+                break
+
+            input("Press Enter to end your turn...")
+            clear_console()
+            turn = 1 - turn
+
+    #New game or exit
+
+    choice = input("Do you want to play again? (yes/no): ").lower()
+    if choice == "yes":
+        # Reset game state
+        player_1.reset()
+        player_2.reset()
+        winner = 0
+        turn = 0
+        break
+    elif choice == "no":
+        print("Thank you for playing!")
+        exit()
+    else:
+        print("Invalid choice. Please enter 'yes' or 'no'.")
+
+    
