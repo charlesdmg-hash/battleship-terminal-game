@@ -108,7 +108,7 @@ class Player:
                             return
                         
                         self.board[min(y1, y2) + i][x1] = "^"
-                        self.ships_pos[chr(x1 + 65) + str(min(y1, y2) + i + 1)] = (ship, str(min(y1, y2) + i + 1)) 
+                        self.ships_pos[chr(x1 + 65) + str(min(y1, y2) + i + 1)] = [ship, (min(y1, y2) + i - 1)] 
 
                     else:
                         clear_console()
@@ -127,7 +127,7 @@ class Player:
                             print("Invalid placement. Ships cannot overlap.")
                             return
                         self.board[y1][min(x1, x2) + i] = "^"
-                        self.ships_pos[((chr(min(x1, x2) + i + 65)) + str(y1 + 1))] = (ship, str(min(x1, x2) + i + 1))
+                        self.ships_pos[((chr(min(x1, x2) + i + 65)) + str(y1 + 1))] = [ship, (min(x1, x2) + i)]
 
                     else:
                         clear_console()
@@ -176,9 +176,10 @@ class Player:
 
         if target.board[y][x] == "^":
             self.attack_board[y][x] = "O"
-            target.ships_pos[coordinates]
-            target.ships_status[target.ships_pos[coordinates][0]] = "O"
-            print(f"hit! You hit a ship at {coordinates}.\n")
+
+            target.ships_status[target.ships_pos[coordinates][0]][target.ships_pos[coordinates][1]] = "O"
+
+            print(f"HIT!!! You hit a ship at {coordinates}.\n")
             if all(status == "O" for status in target.ships_status[target.ships_pos[coordinates][0]]):
                 
                 print(f"You sunk {target.name}'s {target.ships_pos[coordinates][0]}!\n")
