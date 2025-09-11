@@ -429,7 +429,7 @@ while True:
 
             clear_console()
             
-            if player_1.attack_board[ord(coordinates[0]) - 65][int(coordinates[1]) - 1] in ["O", "X"]:
+            if player_1.attack_board[int(coordinates[1]) - 1][ord(coordinates[0]) - 65] in ["O", "X"]:
                 print("You have already attacked this coordinate. Please choose different coordinates.\n")
                 continue
             else:
@@ -463,8 +463,8 @@ while True:
                 continue        
 
             clear_console()
-            
-            if player_2.attack_board[ord(coordinates[0]) - 65][int(coordinates[1]) - 1] in ["O", "X"]:
+
+            if player_2.attack_board[int(coordinates[1]) - 1][ord(coordinates[0]) - 65] in ["O", "X"]:
                 print("You have already attacked this coordinate. Please choose different coordinates.\n")
                 continue
             else:
