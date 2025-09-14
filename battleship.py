@@ -101,7 +101,7 @@ class Player:
 
             if x1 == x2:
                 for i in range(length):
-                    if (abs(y1 - y2)) == length -1:
+                    if (abs(y1 - y2)) == length - 1:
                         if self.board[min(y1, y2) + i][x1] == "^":
                             clear_console()
                             print("Invalid placement. Ships cannot overlap.")  
@@ -121,13 +121,13 @@ class Player:
 
             elif y1 == y2:
                 for i in range(length):
-                    if (abs(x1 - x2)) == length -1:
+                    if (abs(x1 - x2)) == length - 1:
                         if self.board[y1][min(x1, x2) + i] == "^":
                             clear_console() 
                             print("Invalid placement. Ships cannot overlap.")
                             return
                         self.board[y1][min(x1, x2) + i] = "^"
-                        self.ships_pos[((chr(min(x1, x2) + i + 65)) + str(y1 + 1))] = [ship, (min(x1, x2) + i)]
+                        self.ships_pos[((chr(min(x1, x2) + i + 65)) + str(y1 + 1))] = [ship, (min(x1, x2) + i + 1)]
 
                     else:
                         clear_console()
@@ -177,7 +177,7 @@ class Player:
         if target.board[y][x] == "^":
             self.attack_board[y][x] = "O"
 
-            target.ships_status[target.ships_pos["".join(coordinates)][0]][target.ships_pos["".join(coordinates)][1]] = "O"
+            target.ships_status[target.ships_pos["".join(coordinates)][0]][target.ships_pos["".join(coordinates)][1] - 1] = "O"
 
             print(f"HIT!!! You hit a ship at {''.join(coordinates)}.\n")
             if all(status == "O" for status in target.ships_status[target.ships_pos["".join(coordinates)][0]]):
@@ -530,4 +530,5 @@ while choice == "yes":
     else:
         print("Invalid choice. Please enter 'yes' or 'no'.")
 
-    break
+    continue
+
