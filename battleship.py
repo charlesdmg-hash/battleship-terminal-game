@@ -108,7 +108,7 @@ class Player:
                             return
                         
                         self.board[min(y1, y2) + i][x1] = "^"
-                        self.ships_pos[(chr(x1 + 65)) + str(min(y1, y2) + i + 1)] = [ship, (min(y1, y2) + i + 1)]
+                        self.ships_pos[(chr(x1 + 65)) + str(min(y1, y2) + i + 1)] = [ship, i]
 
                     else:
                         clear_console()
@@ -127,7 +127,7 @@ class Player:
                             print("Invalid placement. Ships cannot overlap.")
                             return
                         self.board[y1][min(x1, x2) + i] = "^"
-                        self.ships_pos[((chr(min(x1, x2) + i + 65)) + str(y1 + 1))] = [ship, (min(x1, x2) + i + 1)]
+                        self.ships_pos[((chr(min(x1, x2) + i + 65)) + str(y1 + 1))] = [ship, i]
 
                     else:
                         clear_console()
@@ -177,7 +177,7 @@ class Player:
         if target.board[y][x] == "^":
             self.attack_board[y][x] = "O"
 
-            target.ships_status[target.ships_pos["".join(coordinates)][0]][target.ships_pos["".join(coordinates)][1] - 1] = "O"
+            target.ships_status[target.ships_pos["".join(coordinates)][0]][target.ships_pos["".join(coordinates)][1]] = "O"
 
             print(f"HIT!!! You hit a ship at {''.join(coordinates)}.\n")
             if all(status == "O" for status in target.ships_status[target.ships_pos["".join(coordinates)][0]]):
@@ -275,6 +275,7 @@ while choice == "yes":
         if all(value == 0 for value in player_1.ships.values()):
             turn += 1
             clear_console()
+            print(player_1)
             print(f"{player_1.name}, you have placed all your ships!\n")
             input("Press Enter to continue...")
             clear_console()
@@ -353,6 +354,7 @@ while choice == "yes":
         if all(value == 0 for value in player_2.ships.values()):
             turn -= 1
             clear_console()
+            print(player_2)
             print(f"{player_2.name}, you have placed all your ships!\n")
             input("Press Enter to continue...")
             clear_console()
@@ -523,12 +525,11 @@ while choice == "yes":
         player_2.reset()
         winner = 0
         turn = 0
-        break
+        continue
     elif choice == "no":
         print("Thank you for playing!")
         exit()
     else:
         print("Invalid choice. Please enter 'yes' or 'no'.")
-
-    continue
+        choice = "yes"
 
