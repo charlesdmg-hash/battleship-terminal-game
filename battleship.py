@@ -248,6 +248,8 @@ class Player:
             "Destroyer": {"length": 2, "placed": False}
         }
 
+
+
 #Start of the game
 
 print("Welcome to Battleship!\n")
@@ -517,19 +519,26 @@ while choice == "yes":
             turn = 1 - turn
 
     #New game or exit
-
-    choice = input("Do you want to play again? (yes/no): ").lower()
-    if choice == "yes":
-        # Reset game state
-        player_1.reset()
-        player_2.reset()
-        winner = 0
-        turn = 0
-        continue
-    elif choice == "no":
-        print("Thank you for playing!")
-        exit()
-    else:
-        print("Invalid choice. Please enter 'yes' or 'no'.")
-        choice = "yes"
+    exit = True
+    while exit:
+        choice = input("Do you want to play again? (yes/no): ").lower()
+        if choice == "yes":
+            # Reset game state
+            player_1.reset()
+            player_2.reset()
+            winner = 0
+            turn = 0
+            exit = False
+            clear_console()
+            break
+        elif choice == "no":
+            exit = False
+            clear_console()
+            print("Thank you for playing!")
+            exit()
+        else:
+            clear_console()
+            print("Invalid choice. Please enter 'yes' or 'no'.")
+            
+        continue       
 
