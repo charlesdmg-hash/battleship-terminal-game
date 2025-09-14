@@ -95,7 +95,7 @@ class Player:
 
         #coordinates
         def coordinates(start, end, length):
-        
+            
             x1, y1 = ord(start[0]) - 65, int(start[1]) - 1
             x2, y2 = ord(end[0]) - 65, int(end[1]) - 1
 
@@ -108,7 +108,7 @@ class Player:
                             return
                         
                         self.board[min(y1, y2) + i][x1] = "^"
-                        self.ships_pos[chr(x1 + 65) + str(min(y1, y2) + i + 1)] = [ship, (min(y1, y2) + i - 1)] 
+                        self.ships_pos[(chr(x1 + 65)) + str(min(y1, y2) + i + 1)] = [ship, (min(y1, y2) + i + 1)]
 
                     else:
                         clear_console()
@@ -171,28 +171,28 @@ class Player:
     def attack(self, target, coordinates):
 
         x, y = ord(coordinates[0]) - 65, int(coordinates[1]) - 1
-        self.remaining_ships_to_sunk = [ship for ship in target.ships_status if any(status == "^" for status in target.ships_status[ship])]
-        target.remaining_ships_to_sunk = [ship for ship in self.ships_status if any(status == "^" for status in self.ships_status[ship])]
+        self.remaining_ships_to_be_sunk = [ship for ship in self.ships_status if any(status == "^" for status in self.ships_status[ship])]
+        target.remaining_ships_to_be_sunk = [ship for ship in target.ships_status if any(status == "^" for status in target.ships_status[ship])]
 
         if target.board[y][x] == "^":
             self.attack_board[y][x] = "O"
 
-            target.ships_status[target.ships_pos[coordinates][0]][target.ships_pos[coordinates][1]] = "O"
+            target.ships_status[target.ships_pos["".join(coordinates)][0]][target.ships_pos["".join(coordinates)][1]] = "O"
 
-            print(f"HIT!!! You hit a ship at {coordinates}.\n")
-            if all(status == "O" for status in target.ships_status[target.ships_pos[coordinates][0]]):
-                
-                print(f"You sunk {target.name}'s {target.ships_pos[coordinates][0]}!\n")
-                self.remaining_ships_to_sunk = [ship for ship in target.ships_status if any(status == "^" for status in target.ships_status[ship])]
+            print(f"HIT!!! You hit a ship at {''.join(coordinates)}.\n")
+            if all(status == "O" for status in target.ships_status[target.ships_pos["".join(coordinates)][0]]):
 
-            print(f"You have {len(self.remaining_ships_to_sunk)} ships remaining to be sunk: {", ".join(self.remaining_ships_to_sunk)}.\n")
-            print(f"{target.name} has {len(target.remaining_ships_to_sunk)} ships remaining to sunk: {", ".join(target.remaining_ships_to_sunk)}.\n")
+                print(f"You sunk {target.name}'s {target.ships_pos[''.join(coordinates)][0]}!\n")
+                target.remaining_ships_to_be_sunk = [ship for ship in target.ships_status if any(status == "^" for status in target.ships_status[ship])]
+
+            print(f"You have {len(self.remaining_ships_to_be_sunk)} ships remaining: {", ".join(f"{ship} {self.ships_status[ship]}" for ship in self.remaining_ships_to_be_sunk)}.\n")
+            print(f"{target.name} has {len(target.remaining_ships_to_be_sunk)} ships remaining to be sunk: {", ".join(target.remaining_ships_to_be_sunk)}.\n")
 
         else:
             self.attack_board[y][x] = "X"
-            print(f"Miss! No ship at {coordinates}.\n")
-            print(f"You have {len(self.remaining_ships_to_sunk)} ships remaining to be sunk: {", ".join(self.remaining_ships_to_sunk)}.\n")
-            print(f"{target.name} has {len(target.remaining_ships_to_sunk)} ships remaining to sunk: {", ".join(target.remaining_ships_to_sunk)}.\n")
+            print(f"Miss! No ship at {"".join(coordinates)}.\n")
+            print(f"You have {len(self.remaining_ships_to_be_sunk)} ships remaining: {", ".join(f"{ship} {self.ships_status[ship]}" for ship in self.remaining_ships_to_be_sunk)}.\n")
+            print(f"{target.name} has {len(target.remaining_ships_to_be_sunk)} ships remaining to be sunk: {", ".join(target.remaining_ships_to_be_sunk)}.\n")
 
     def reset(self):
 
@@ -266,7 +266,8 @@ else:
     player_2 = Player(name_2)
     print("\n")
 
-while True:
+choice = "yes"
+while choice == "yes":
 
     turn = 0
     while turn == 0:
@@ -313,6 +314,11 @@ while True:
                         print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
                         continue
 
+                    elif start[0] < 'A' or start[0] > 'J' or int(start[1:]) < 1 or int(start[1:]) > 10:
+                        clear_console()
+                        print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                        continue
+
                     end = input(f"Enter the ending coordinate of your {ship} (e.g., A5): " ).upper()
 
                     if end == "":
@@ -321,6 +327,11 @@ while True:
                         continue
 
                     elif len(end) < 2 or len(end) > 3 or not end[0].isalpha() or not end[1:].isdigit():
+                        clear_console()
+                        print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                        continue
+
+                    elif end[0] < 'A' or end[0] > 'J' or int(end[1:]) < 1 or int(end[1:]) > 10:
                         clear_console()
                         print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
                         continue
@@ -381,6 +392,11 @@ while True:
                         print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
                         continue
 
+                    elif start[0] < 'A' or start[0] > 'J' or int(start[1:]) < 1 or int(start[1:]) > 10:
+                        clear_console()
+                        print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                        continue
+
                     end = input(f"Enter the ending coordinate of your {ship} (e.g., A5): " ).upper()
 
                     if end == "":
@@ -392,6 +408,12 @@ while True:
                         clear_console()
                         print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
                         continue
+
+                    elif end[0] < 'A' or end[0] > 'J' or int(end[1:]) < 1 or int(end[1:]) > 10:
+                        clear_console()
+                        print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                        continue
+
                 else:
 
                     clear_console()
@@ -425,14 +447,20 @@ while True:
             elif len(coordinates) < 2 or len(coordinates) > 3 or not coordinates[0].isalpha() or not coordinates[1:].isdigit():
                 clear_console()
                 print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
-                continue        
+                continue    
+
+            elif coordinates[0] < 'A' or coordinates[0] > 'J' or int(coordinates[1:]) < 1 or int(coordinates[1:]) > 10:
+                clear_console()
+                print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                continue    
 
             clear_console()
-            
-            if player_1.attack_board[int(coordinates[1]) - 1][ord(coordinates[0]) - 65] in ["O", "X"]:
+
+            if player_1.attack_board[int(coordinates[1:]) - 1][ord(coordinates[0]) - 65] in ["O", "X"]:
                 print("You have already attacked this coordinate. Please choose different coordinates.\n")
                 continue
             else:
+                coordinates = [coordinates[0], coordinates[1:]]
                 player_1.attack(player_2, coordinates)
 
 
@@ -460,14 +488,20 @@ while True:
             elif len(coordinates) < 2 or len(coordinates) > 3 or not coordinates[0].isalpha() or not coordinates[1:].isdigit():
                 clear_console()
                 print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
-                continue        
+                continue   
+
+            elif coordinates[0] < 'A' or coordinates[0] > 'J' or int(coordinates[1:]) < 1 or int(coordinates[1:]) > 10:
+                clear_console()
+                print("Invalid coordinate. Please enter a valid coordinate (e.g., A1).")
+                continue     
 
             clear_console()
 
-            if player_2.attack_board[int(coordinates[1]) - 1][ord(coordinates[0]) - 65] in ["O", "X"]:
+            if player_2.attack_board[int(coordinates[1:]) - 1][ord(coordinates[0]) - 65] in ["O", "X"]:
                 print("You have already attacked this coordinate. Please choose different coordinates.\n")
                 continue
             else:
+                coordinates = [coordinates[0], coordinates[1:]]
                 player_2.attack(player_1, coordinates)
 
             if all(all(status == "O" for status in statuses) for statuses in player_1.ships_status.values()):
@@ -496,4 +530,4 @@ while True:
     else:
         print("Invalid choice. Please enter 'yes' or 'no'.")
 
-    
+    break
