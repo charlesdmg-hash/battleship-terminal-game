@@ -1,4 +1,5 @@
 import os
+import sys
 
 def clear_console():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -535,10 +536,10 @@ while choice == "yes":
             exit = False
             clear_console()
             print("Thank you for playing!")
-            exit()
+            sys.exit()
         else:
             clear_console()
             print("Invalid choice. Please enter 'yes' or 'no'.")
-            
+
         continue       
 
