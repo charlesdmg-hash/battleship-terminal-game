@@ -1,19 +1,24 @@
+#Importing os and sys to clear console and exit the game
 import os
 import sys
 
+#Function to clear the console
 def clear_console():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+#Player class (create everything related to the player to this specific game)
 class Player:
 
     def __init__(self, name, count = 1):
-
+        
+        #Player name (default name Player 1 or 2 if none provided)
         self.count = count
         if name == "":
             self.name = f"Player {self.count}"
         else:
             self.name = name
 
+        #Player board (10x10 grid)
         self.board = [
     ['~' for i in range(10)],
     ['~' for i in range(10)],
@@ -27,6 +32,7 @@ class Player:
     ['~' for i in range(10)],
         ]
 
+        #Player attack board (10x10 grid)
         self.attack_board = [
     ['~' for i in range(10)],
     ['~' for i in range(10)],
@@ -40,6 +46,7 @@ class Player:
     ['~' for i in range(10)],
         ]
 
+        #Ships and their status (1 means not placed, 0 means placed)
         self.ships = {
             "Carrier": 1,
             "Battleship": 1,
@@ -48,6 +55,7 @@ class Player:
             "Destroyer": 1
         }
 
+        #Ships status ( "^" means not hit, "O" means hit)
         self.ships_status = {
             "Carrier": ["^","^","^","^","^"],
             "Battleship": ["^","^","^","^"],
@@ -56,8 +64,11 @@ class Player:
             "Destroyer": ["^","^"]
         }
 
+
+        #Dictionary to store coordinates, the ship and the index of the ship part
         self.ships_pos = {}
 
+        #This function is used to keep track of the ships that are left and their lengths for string purposes
         self.ships_menu = {
             "Carrier": {"length": 5, "placed": False}, 
             "Battleship": {"length": 4, "placed": False}, 
@@ -66,12 +77,12 @@ class Player:
             "Destroyer": {"length": 2, "placed": False}
         }
 
-        
+    #Prints name and playing board  
     def __repr__(self):
 
         return f"{self.name}'s board:\n\n" + f"{self.default_board()}"
 
-
+    #Prints the playing boards in an good looking form
     def default_board(self):
 
         strboard = ("   " + " ".join(f"{chr(65+i):^{3}}" for i in range(len(self.board[0]))) + "\n")
@@ -80,6 +91,7 @@ class Player:
 
         return strboard
     
+    #Prints the attacking boards in an good looking form
     def playing_board(self):
 
         strboard = ("   " + " ".join(f"{chr(65+i):^{3}}" for i in range(len(self.attack_board[0]))) + "\n")
@@ -88,6 +100,7 @@ class Player:
 
         return strboard
     
+    #Function for placing the ships
     def place_ships(self, ship, start, end):
 
         self.ship = ship
@@ -169,6 +182,7 @@ class Player:
                 clear_console()
                 coordinates(self.start, self.end, length)
 
+    #Function for attacking the opponent
     def attack(self, target, coordinates):
 
         x, y = ord(coordinates[0]) - 65, int(coordinates[1]) - 1
@@ -195,6 +209,7 @@ class Player:
             print(f"You have {len(self.remaining_ships_to_be_sunk)} ships remaining: {", ".join(f"{ship} {self.ships_status[ship]}" for ship in self.remaining_ships_to_be_sunk)}.\n")
             print(f"{target.name} has {len(target.remaining_ships_to_be_sunk)} ships remaining to be sunk: {", ".join(target.remaining_ships_to_be_sunk)}.\n")
 
+    #Function to reset the game state for a new game
     def reset(self):
 
         self.board = [
@@ -269,9 +284,12 @@ else:
     player_2 = Player(name_2)
     print("\n")
 
+#Main game loop
 choice = "yes"
 while choice == "yes":
-
+    #Turn variable to switch between players
+    # 0 = player 1, 1 = player 2
+    #Players place their ships
     turn = 0
     while turn == 0:
 
@@ -351,7 +369,7 @@ while choice == "yes":
                 clear_console()
                 print("You have already placed this ship. Please choose a different ship.\n")
 
-
+    #Player 2 places their ships
     while turn == 1:
 
         if all(value == 0 for value in player_2.ships.values()):
@@ -434,8 +452,8 @@ while choice == "yes":
 
     print("All ships placed successfully! Let the game begin!\n")
 
+    #Game loop for attacking
     winner = 0
-
     while winner == 0: 
 
         while turn == 0:
@@ -541,5 +559,4 @@ while choice == "yes":
             clear_console()
             print("Invalid choice. Please enter 'yes' or 'no'.")
 
-        continue       
-
+        continue
